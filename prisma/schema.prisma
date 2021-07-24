@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("MYSQL_URL")
+}
+
+model channels {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(45)
+  contacts_channels contacts_channels[]
+}
+
+model cities {
+  id           Int         @id @default(autoincrement())
+  name         String      @db.VarChar(45)
+  countries_id Int
+  countries    countries   @relation(fields: [countries_id], references: [id])
+  companies    companies[]
+
+  @@index([countries_id], name: "fk_cities_countries_idx")
+}
+
+model companies {
+  id        Int        @id @default(autoincrement())
+  name      String     @db.VarChar(45)
+  address   String     @db.VarChar(45)
+  email     String     @db.VarChar(25)
+  phone     String     @db.VarChar(15)
+  cities_id Int
+  cities    cities     @relation(fields: [cities_id], references: [id])
+  contacts  contacts[]
+
+  @@index([cities_id], name: "fk_companies_cities1_idx")
+}
+
+model contacts {
+  id                Int                 @id @default(autoincrement())
+  username          String              @db.VarChar(24)
+  lastname          String              @db.VarChar(45)
+  email             String              @db.VarChar(255)
+  password          String              @db.VarChar(32)
+  position          String              @db.VarChar(45)
+  create_time       DateTime            @default(now()) @db.Timestamp(0)
+  address           String?             @db.VarChar(45)
+  interest          Int?                @default(0)
+  imgUrl            String?             @db.VarChar(45)
+  users_id          Int
+  regions_id        Int
+  companies_id      Int
+  companies         companies           @relation(fields: [companies_id], references: [id])
+  regions           regions             @relation(fields: [regions_id], references: [id])
+  users             users               @relation(fields: [users_id], references: [id])
+  contacts_channels contacts_channels[]
+
+  @@index([companies_id], name: "fk_contacts_companies1_idx")
+  @@index([regions_id], name: "fk_contacts_regions1_idx")
+  @@index([users_id], name: "fk_contacts_users1_idx")
+}
+
+model contacts_channels {
+  id             Int         @id
+  acount         String      @db.VarChar(45)
+  channels_id    Int
+  preferences_id Int
+  contacts_id    Int
+  channels       channels    @relation(fields: [channels_id], references: [id])
+  contacts       contacts    @relation(fields: [contacts_id], references: [id])
+  preferences    preferences @relation(fields: [preferences_id], references: [id])
+
+  @@index([channels_id], name: "fk_contacts_channels_channels1_idx")
+  @@index([contacts_id], name: "fk_contacts_channels_contacts1_idx")
+  @@index([preferences_id], name: "fk_contacts_channels_preferences1_idx")
+}
+
+model countries {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(45)
+  regions_id Int
+  regions    regions  @relation(fields: [regions_id], references: [id])
+  cities     cities[]
+
+  @@index([regions_id], name: "fk_countries_regions1_idx")
+}
+
+model preferences {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(45)
+  contacts_channels contacts_channels[]
+}
+
+model regions {
+  id        Int         @id @default(autoincrement())
+  name      String      @db.VarChar(45)
+  contacts  contacts[]
+  countries countries[]
+}
+
+model users {
+  id          Int        @id @default(autoincrement())
+  username    String     @unique @db.VarChar(16)
+  lastname    String     @db.VarChar(45)
+  email       String     @unique @db.VarChar(45)
+  password    String     @db.VarChar(64)
+  create_time DateTime   @default(now()) @db.Timestamp(0)
+  isadmin     Boolean?   @default(dbgenerated("(b'0')")) @db.Bit(1)
+  contacts    contacts[]
+}
