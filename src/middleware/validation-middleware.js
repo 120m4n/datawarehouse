@@ -119,9 +119,9 @@ const username = (req, res, next) => {
 
 const locationName = (req, res, next) => {
   const validationRule = {
-    username: "required|string|min:5|max:25",
+    name: "required|string|min:4|max:25",
   };
-  validator(req.params, validationRule, {}, (err, status) => {
+  validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
       res.status(400).send({
         success: false,

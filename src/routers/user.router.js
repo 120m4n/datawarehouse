@@ -9,49 +9,62 @@ const {
 const validationMiddleware = require("../middleware/validation-middleware");
 
 router
-  .get("/all", AuthorizationAdmin, UserController.getAll)
+  .get("/", AuthorizationAdmin,
+    UserController.getUsers)
+  
+router
   .get(
-    "/getByUserName/:username",
+    "/getUserByName/:username",
     validationMiddleware.username,
     AuthorizationAdmin,
     UserController.getUserByUserName
   )
+router
   .get(
-    "/getByEmail/:email",
+    "/getUserByEmail/:email",
     validationMiddleware.email,
     AuthorizationAdmin,
     UserController.getUserByEmail
-  )
+)
 
-  .get(
-    "/:username/exist",
-    validationMiddleware.username,
-    AuthorizationAdmin,
-    UserController.userExists
-  )
-
-  .post("/login", validationMiddleware.login, UserController.login)
-
-  .post(
-    "/registration",
-    validationMiddleware.userData,
-    AuthorizationAdmin,
-    UserController.Create
-  )
-
-  .put(
-    "/:id",
-    validationMiddleware.id,
-    validationMiddleware.userUpdateData,
-    AuthorizationAdmin,
-    UserController.Update
-  )
-
-  .delete(
-    "/:id",
+router.
+  get("/getUserByID/:id",
     validationMiddleware.id,
     AuthorizationAdmin,
-    UserController.Delete
-  );
+    UserController.getUserByID
+      
+)
+
+
+    // .get(
+    //   "/:username/exist",
+    //   validationMiddleware.username,
+    //   AuthorizationAdmin,
+    //   UserController.userExists
+    // )
+
+    .post("/login", validationMiddleware.login, UserController.login)
+
+    .post(
+      "/registration",
+      validationMiddleware.userData,
+      AuthorizationAdmin,
+      UserController.Create
+    )
+
+    .put(
+      "/:id",
+      validationMiddleware.id,
+      validationMiddleware.userUpdateData,
+      AuthorizationAdmin,
+      UserController.Update
+    )
+
+    .delete(
+      "/:id",
+      validationMiddleware.id,
+      AuthorizationAdmin,
+      UserController.Delete
+    );
 
 module.exports = router;

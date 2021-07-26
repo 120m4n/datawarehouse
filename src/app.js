@@ -10,19 +10,22 @@ const app = express();
 const helmet = require("helmet");
 const cors = require("cors");
 
-
 app.use(express.json(), compression(), helmet(), cors());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
 const UserRouter = require("./routers/user.router");
-const LocationRourter = require("./routers/location.router");
+const RegionRouter = require("./routers/region.router");
+const CountryRouter = require("./routers/country.router");
+// const LocationRourter = require("./routers/location.router");
 
 // const ProductRouter = require("./routers/product.router");
 // const OrderRouter = require("./routers/order.router");
 
-app.use("/user", UserRouter);
-app.use("/location", LocationRourter);
+app.use("/users", UserRouter);
+app.use("/regions", RegionRouter);
+app.use("/countries", CountryRouter);
+// app.use("/location", LocationRourter);
 // app.use("/product", ProductRouter);
 // app.use("/order", OrderRouter);
 

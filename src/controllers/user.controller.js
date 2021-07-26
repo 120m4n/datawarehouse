@@ -77,7 +77,42 @@ const getUserByEmail = async (req, res) => {
   }
 };
 
-const getAll = async (req, res, next) => {
+const getUserByID = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userData = await prisma.users.findUnique({
+      where: { id: id },
+      select: {
+        id: true,
+        username: true,
+        lastname: true,
+        email: true,
+        create_time: true,
+        isadmin: true,
+      },
+    });
+    if (userData) {
+      return res.status(200).json({
+        success: true,
+        message: "User info",
+        data: userData,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
+    
+const getUsers = async (req, res, next) => {
   try {
     const allUsers = await prisma.users.findMany({
       select: {
@@ -343,7 +378,8 @@ module.exports = {
   Delete,
   userExists,
   login,
-  getAll,
+  getUsers,
   getUserByUserName,
   getUserByEmail,
+  getUserByID,
 };
