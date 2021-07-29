@@ -111,7 +111,7 @@ const getUserByID = async (req, res) => {
     });
   }
 };
-    
+
 const getUsers = async (req, res, next) => {
   try {
     const allUsers = await prisma.users.findMany({
@@ -223,7 +223,6 @@ const Create = async (req, res) => {
 
 const login = async (req, res) => {
   const body = req.body;
-
   try {
     const userData = await prisma.users.findUnique({
       where: { username: body.username },

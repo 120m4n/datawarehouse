@@ -22,6 +22,13 @@ router
     AuthorizationAdmin,
     RegionController.postRegions
   )
+  .post(
+    "/:id/country",
+    validationMiddleware.id,
+    validationMiddleware.locationName,
+    AuthorizationAdmin,
+    RegionController.postCountry
+  )
 
   .put(
     "/:id",

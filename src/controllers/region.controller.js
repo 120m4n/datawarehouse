@@ -44,12 +44,6 @@ const getRegions = async (req, res, next) => {
       select: {
         id: true,
         name: true,
-        countries: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
       },
     });
 
@@ -93,6 +87,61 @@ const postRegions = async (req, res) => {
       success: true,
       message: "Successful user creation",
       data: region,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
+
+const postCountry = async (req, res) => {
+  const id = req.params.id; //id of region
+
+  try {
+    let countryExists;
+    const { name } = req.body;
+
+    regionExist = await prisma.regions.findFirst({
+      where: { id: Number(id) },
+    });
+    // if not exists, throw error
+    if (!regionExist) {
+      return res.status(400).json({
+        success: false,
+        error: "Region with this id does not exist",
+        data: {},
+      });
+    }
+
+    countryExists = await prisma.countries.findFirst({
+      where: {
+        regions_id: Number(id),
+        name: name,
+      },
+    });
+
+    if (countryExists) {
+      return res.status(400).json({
+        success: false,
+        error: "Country with this name already exists",
+        data: {},
+      });
+    }
+
+    const country = await prisma.countries.create({
+      data: {
+        name: name,
+        regions_id: Number(id),
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Successful country creation",
+      data: country,
     });
   } catch (err) {
     return res.status(500).json({
@@ -200,4 +249,5 @@ module.exports = {
   getRegionByID,
   putRegionsById,
   deleteRegionsById,
+  postCountry,
 };

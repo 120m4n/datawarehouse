@@ -43,6 +43,9 @@ const userUpdateData = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
+
+    // const body = req.body;
+    // console.log(body);
   const validationRule = {
     username: "required|string",
     password: "required|string",
