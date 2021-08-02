@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const createError = require("http-errors");
 
-
 // Importacion de variables de entorno
 const API_PORT = process.env.PORT || 3000;
 
@@ -18,7 +17,6 @@ app.set("env", process.env.ENVIRONMENT || "development");
 // app.use("/public", express.static(path.join(__dirname, "public")));
 // app.use(express.static(path.join(__dirname, "public")));
 
-
 //middleware
 const helmet = require("helmet");
 const cors = require("cors");
@@ -28,7 +26,7 @@ app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc:["'self'"],
+        defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "https://code.jquery.com"],
         styleSrc: ["'self'", "https://maxcdn.bootstrapcdn.com"],
       },
@@ -37,6 +35,15 @@ app.use(
 );
 
 app.use(morgan("dev"));
+// You can also enable pre-flight across-the-board like so:
+app.options('*', cors()) // include before other routes
+
+// const corsOptions = {
+//   origin: 'http://127.0.0.1:5500',
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   "optionsSuccessStatus": 200
+// };
+
 app.use(express.json(), compression(), cors());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: false }));
@@ -44,9 +51,9 @@ app.use(express.urlencoded({ extended: false }));
 const UserRouter = require("./routers/user.router");
 const RegionRouter = require("./routers/region.router");
 const CountryRouter = require("./routers/country.router");
+const CityRouter = require("./routers/city.router");
 const ContactRouter = require("./routers/contact.router");
 // const LocationRourter = require("./routers/location.router");
-
 
 /* GET home page. */
 app.get("/", function (req, res, next) {
@@ -67,14 +74,14 @@ app.get("/", function (req, res, next) {
     </html>
   `;
   res.send(html);
-
-
 });
 
 app.use("/users", UserRouter);
 app.use("/regions", RegionRouter);
 app.use("/countries", CountryRouter);
+app.use("/cities", CityRouter);
 app.use("/contacts", ContactRouter);
+
 // app.use("/location", LocationRourter);
 // app.use("/product", ProductRouter);
 // app.use("/order", OrderRouter);
@@ -82,6 +89,7 @@ app.use("/contacts", ContactRouter);
 /* ---------------------------------- GESTION DE ERRORES --------------------------------- */
 //Endpoint not found error
 app.use((req, res, next) => {
+  console.log("Error 404: Endpoint not found");
   next(createError(404));
 });
 

@@ -61,41 +61,59 @@ const getCountries = async (req, res, next) => {
   }
 };
 
-// const postCountrys = async (req, res) => {
-//   const body = req.body;
-//   try {
-//     let CountryExist;
-//     const { name } = req.body;
+const postCity = async (req, res) => {
+  const id = req.params.id; //id of country
+  try {
+    let CountryExist;
+    const { name } = req.body;
 
-//     CountryExist = await prisma.Countrys.findFirst({
-//       where: { name: name },
-//     });
+    CountryExist = await prisma.countries.findFirst({
+      where: { id: Number(id) },
+    });
 
-//     if (CountryExist) {
-//       return res.status(400).json({
-//         success: false,
-//         error: "Country with this name already exists",
-//         data: {},
-//       });
-//     }
+    if (!CountryExist) {
+      return res.status(400).json({
+        success: false,
+        error: "Country with this id does not exist",
+        data: {},
+      });
+    }
 
-//     const Country = await prisma.Countrys.create({
-//       data: body,
-//     });
+    const cityExists = await prisma.cities.findFirst({
+      where: {
+        countries_id: Number(id),
+        name: name,
+      },
+    });
 
-//     return res.status(200).json({
-//       success: true,
-//       message: "Successful user creation",
-//       data: Country,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//       data: {},
-//     });
-//   }
-// };
+    if (cityExists) {
+      return res.status(400).json({
+        success: false,
+        error: "City with this name already exists",
+        data: {},
+      });
+    }
+
+    const city = await prisma.cities.create({
+      data: {
+        name: name,
+        countries_id: Number(id),
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Successful city creation",
+      data: city,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
 
 const putCountriesById = async (req, res) => {
   const { id } = req.params;
@@ -190,8 +208,8 @@ const deleteCountriesById = async (req, res) => {
 
 module.exports = {
   getCountries,
-  // postCountrys,
   getCountryByID,
   putCountriesById,
   deleteCountriesById,
+  postCity,
 };

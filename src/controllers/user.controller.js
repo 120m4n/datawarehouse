@@ -4,6 +4,15 @@ const { sign } = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+const checkJWT = async (req, res, next) => {
+        return res.status(200).json({
+        success: true,
+        message: "JWT Validation Success",
+        data: {},
+        });
+};
+
+
 const getUserByUserName = async (req, res) => {
   const { username } = req.params;
 
@@ -169,6 +178,7 @@ const userExists = async (req, res) => {
 
 const Create = async (req, res) => {
   const body = req.body;
+  console.log(body);
   try {
     let userExists;
     const { email } = req.body;
@@ -200,6 +210,8 @@ const Create = async (req, res) => {
 
     const salt = genSaltSync(10);
     body.password = hashSync(body.password, salt);
+
+    console.log("LLego hasta aqui")
 
     const user = await prisma.users.create({
       data: body,
@@ -381,4 +393,5 @@ module.exports = {
   getUserByUserName,
   getUserByEmail,
   getUserByID,
+  checkJWT,
 };

@@ -19,6 +19,7 @@ model cities {
   countries_id Int
   countries    countries   @relation(fields: [countries_id], references: [id])
   companies    companies[]
+  contacts     contacts[]
 
   @@index([countries_id], name: "fk_cities_countries_idx")
 }
@@ -41,22 +42,21 @@ model contacts {
   username          String              @db.VarChar(24)
   lastname          String              @db.VarChar(45)
   email             String              @db.VarChar(255)
-  password          String              @db.VarChar(32)
   position          String              @db.VarChar(45)
   create_time       DateTime            @default(now()) @db.Timestamp(0)
   address           String?             @db.VarChar(45)
   interest          Int?                @default(0)
   imgUrl            String?             @db.VarChar(45)
   users_id          Int
-  regions_id        Int
   companies_id      Int
+  cities_id         Int
+  cities            cities              @relation(fields: [cities_id], references: [id])
   companies         companies           @relation(fields: [companies_id], references: [id])
-  regions           regions             @relation(fields: [regions_id], references: [id])
   users             users               @relation(fields: [users_id], references: [id])
   contacts_channels contacts_channels[]
 
+  @@index([cities_id], name: "fk_contacts_cities1_idx")
   @@index([companies_id], name: "fk_contacts_companies1_idx")
-  @@index([regions_id], name: "fk_contacts_regions1_idx")
   @@index([users_id], name: "fk_contacts_users1_idx")
 }
 
@@ -94,7 +94,6 @@ model preferences {
 model regions {
   id        Int         @id @default(autoincrement())
   name      String      @db.VarChar(45)
-  contacts  contacts[]
   countries countries[]
 }
 

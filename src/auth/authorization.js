@@ -35,19 +35,7 @@ const AuthorizationAdmin = (req, res, next) => {
       message: "Should have authorization token",
       data: {},
     });
-    // res.status(401);
 
-    // res.format({
-    //   html: function () {
-    //     res.render("pages/login");
-    //   },
-    //   json: function () {
-    //     res.json({ error: "Should have authorization token" });
-    //   },
-    //   default: function () {
-    //     res.type("txt").send("Should have authorization token");
-    //   },
-    // });
   }
 };
 

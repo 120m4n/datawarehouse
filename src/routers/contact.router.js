@@ -10,7 +10,8 @@ const {
 const validationMiddleware = require("../middleware/validation-middleware");
 
 router.get("/", ContactController.getContacts);
-  
+router.get("/:id", ContactController.getContactById);
+
 // router
 //   .get(
 //     "/getUserByName/:username",
@@ -31,9 +32,8 @@ router.get("/", ContactController.getContacts);
 //     validationMiddleware.id,
 //     AuthorizationAdmin,
 //     ContactController.getUserByID
-      
-// )
 
+// )
 
 //     // .get(
 //     //   "/:username/exist",

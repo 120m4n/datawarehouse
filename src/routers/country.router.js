@@ -16,12 +16,13 @@ router
     CountryController.getCountryByID
   )
 
-  // .post(
-  //   "/",
-  //   validationMiddleware.locationName,
-  //   AuthorizationAdmin,
-  //   CountryController.postRegions
-  // )
+  .post(
+    "/:id/city",
+    validationMiddleware.id,
+    validationMiddleware.locationName,
+    AuthorizationAdmin,
+    CountryController.postCity
+  )
 
   .put(
     "/:id",
