@@ -12,7 +12,7 @@ const userData = (req, res, next) => {
     if (!status) {
       res.status(400).send({
         success: false,
-        message: "Validation failed",
+        message: "validation",
         data: err,
       });
     } else {
@@ -33,7 +33,7 @@ const userUpdateData = (req, res, next) => {
     if (!status) {
       res.status(400).send({
         success: false,
-        message: "Validation failed",
+        message: "validation",
         data: err,
       });
     } else {

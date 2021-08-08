@@ -9,7 +9,7 @@ const {
 
 const validationMiddleware = require("../middleware/validation-middleware");
 
-router.get("/", AuthorizationUser, UserController.getUsers);
+router.get("/", UserController.getUsers);
 
 router.get("/checkJWT", AuthorizationUser, UserController.checkJWT);
 
@@ -21,16 +21,16 @@ router.get(
 );
 router.get(
   "/getUserByEmail/:email",
-  validationMiddleware.email,
   AuthorizationAdmin,
+  validationMiddleware.email,
   UserController.getUserByEmail
 );
 
 router
   .get(
     "/getUserByID/:id",
-    validationMiddleware.id,
     AuthorizationAdmin,
+    validationMiddleware.id,
     UserController.getUserByID
   )
 

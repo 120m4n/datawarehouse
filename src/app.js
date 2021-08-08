@@ -22,27 +22,35 @@ const helmet = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
 
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "https://code.jquery.com"],
-        styleSrc: ["'self'", "https://maxcdn.bootstrapcdn.com"],
-      },
-    },
-  })
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: {
+//       directives: {
+//         defaultSrc: ["'self'"],
+//         scriptSrc: ["'self'", "https://code.jquery.com"],
+//         styleSrc: ["'self'", "https://maxcdn.bootstrapcdn.com"],
+//       },
+//     },
+//   })
+// );
 
 app.use(morgan("dev"));
 // You can also enable pre-flight across-the-board like so:
-app.options('*', cors()) // include before other routes
+// app.options('*', cors()) // include before other routes
 
 // const corsOptions = {
-//   origin: 'http://127.0.0.1:5500',
+//   origin: '*',
 //   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   "optionsSuccessStatus": 200
+//   "preflightContinue": false,
+//   aallowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Content-Length", "X-CSRF-Token", "X-XSRF-TOKEN", "X-CSRF-Token-From-App"],
+//   "optionsSuccessStatus": 204
 // };
+
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 app.use(express.json(), compression(), cors());
 // parse requests of content-type - application/x-www-form-urlencoded
@@ -102,7 +110,7 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
   // res.render("pages/error");
-  res.send({ status: "Error", message: err });
+  res.send({ status: "false", message:'server' ,data:err });
   // next();
 });
 

@@ -9,7 +9,8 @@ const getContacts = async (req, res, next) => {
         username: true,
         lastname: true,
         email: true,
-        position: true,
+        job_tittle: true,
+        interest: true,
         companies: {
           select: {
             name: true,
@@ -75,7 +76,7 @@ const getContactById = async (req, res, next) => {
         username: true,
         lastname: true,
         email: true,
-        position: true,
+        job_tittle: true,
         companies: {
           select: {
             name: true,

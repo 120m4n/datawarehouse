@@ -90,7 +90,7 @@ const getUserByID = async (req, res) => {
   const { id } = req.params;
   try {
     const userData = await prisma.users.findUnique({
-      where: { id: id },
+      where: { id: Number(id) },
       select: {
         id: true,
         username: true,
@@ -134,10 +134,11 @@ const getUsers = async (req, res, next) => {
       },
     });
 
+    const total = allUsers.length;
+
     return res.status(200).json({
-      success: true,
-      message: "All user info",
-      data: allUsers,
+      total: total,
+      rows: allUsers,
     });
   } catch (err) {
     return res.status(500).json({
@@ -178,7 +179,7 @@ const userExists = async (req, res) => {
 
 const Create = async (req, res) => {
   const body = req.body;
-  console.log(body);
+  // console.log(body);
   try {
     let userExists;
     const { email } = req.body;
@@ -201,7 +202,7 @@ const Create = async (req, res) => {
     });
 
     if (userExists) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
         error: "User with this username already exists",
         data: {},
@@ -210,8 +211,6 @@ const Create = async (req, res) => {
 
     const salt = genSaltSync(10);
     body.password = hashSync(body.password, salt);
-
-    console.log("LLego hasta aqui")
 
     const user = await prisma.users.create({
       data: body,
