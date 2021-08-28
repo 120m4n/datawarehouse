@@ -124,6 +124,7 @@ const getUserByID = async (req, res) => {
 const getUsers = async (req, res, next) => {
   try {
     const allUsers = await prisma.users.findMany({
+      where: { isactive: true },
       select: {
         id: true,
         username: true,
@@ -131,6 +132,7 @@ const getUsers = async (req, res, next) => {
         email: true,
         create_time: true,
         isadmin: true,
+        isactive:true,
       },
     });
 
@@ -192,7 +194,7 @@ const Create = async (req, res) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        error: "User with this email already exists",
+        message: "User with this email already exists",
         data: {},
       });
     }
@@ -204,7 +206,7 @@ const Create = async (req, res) => {
     if (userExists) {
       return res.status(409).json({
         success: false,
-        error: "User with this username already exists",
+        message: "User with this username already exists",
         data: {},
       });
     }
@@ -345,6 +347,9 @@ const Delete = async (req, res) => {
   try {
     const userExists = await prisma.users.findFirst({
       where: { id: Number(id) },
+      select: { 
+        contacts:true,
+      }
     });
 
     // if not exists, throw error
@@ -355,6 +360,29 @@ const Delete = async (req, res) => {
         error: "User Not Exists",
         data: {},
       });
+    }
+
+    const hasContacts = userExists.contacts.length;
+    // user has contacts
+    if (hasContacts > 0) {
+      const user = await prisma.users.update({
+        where: { id: Number(id) },
+        data: { isactive: false},
+        select: {
+          id: true,
+          username: true,
+          lastname: true,
+          email: true,
+          isadmin: true,
+        },
+      });
+  
+      return res.status(200).json({
+        success: true,
+        message: "Successful user delete",
+        data: user,
+      });
+
     }
 
     const user = await prisma.users.delete({
