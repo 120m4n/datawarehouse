@@ -61,6 +61,7 @@ const RegionRouter = require("./routers/region.router");
 const CountryRouter = require("./routers/country.router");
 const CityRouter = require("./routers/city.router");
 const ContactRouter = require("./routers/contact.router");
+const CompanyRouter = require("./routers/company.router");
 // const LocationRourter = require("./routers/location.router");
 
 /* GET home page. */
@@ -89,6 +90,7 @@ app.use("/regions", RegionRouter);
 app.use("/countries", CountryRouter);
 app.use("/cities", CityRouter);
 app.use("/contacts", ContactRouter);
+app.use("/companies", CompanyRouter);
 
 // app.use("/location", LocationRourter);
 // app.use("/product", ProductRouter);

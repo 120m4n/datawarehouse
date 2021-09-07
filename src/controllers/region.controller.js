@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 const getRegionByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const regionData = await prisma.regions.findUnique({
-      where: { id: Number(id) },
+    const regionData = await prisma.regions.findFirst({
+      where: { id: Number(id), isactive: true },
       select: {
         id: true,
         name: true,
@@ -38,9 +38,74 @@ const getRegionByID = async (req, res) => {
   }
 };
 
+const getTreeview = async (req, res) => {
+  let prefixCountry = 100;
+  let prefixCity = 1000;
+
+
+  try {
+
+    const getRegiones = await prisma.regions.findMany({
+      where: { isactive: true },
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    const getCountries = await prisma.countries.findMany({
+      where: { isactive: true },
+      select: {
+        id:true,
+        name:true,
+        regions_id: true,
+      },
+    }); 
+
+    const getCities = await prisma.cities.findMany({
+      where: { isactive: true },
+      select: {
+        id:true,
+        name:true,
+        countries_id: true,
+      }
+    });
+
+    const regiones = getRegiones.map(el => {
+      return { 'Id': el.id, 'Title': el.name.padEnd('25','.'), 'ParentId' : 0, 'Type':'region', 'bdId':el.id }
+    });
+
+    
+    const countries = getCountries.map(el => {
+      return { 'Id': prefixCountry + el.id, 'Title': el.name.padEnd('25','.'), 'ParentId' : el.regions_id, 'Type':'country', 'bdId':el.id }
+    });
+
+
+
+    const cities = getCities.map(el => {
+      return { 'Id': prefixCity + el.id, 'Title': el.name.padEnd('25','.'), 'ParentId' : prefixCountry + el.countries_id, 'Type':'city', 'bdId':el.id }
+    });
+
+    const resultList = [{ 'Id' : 0, 'Title' : 'My Tree','ParentId' : null }].concat(regiones,countries,cities);
+
+    return res.status(200).json({
+      data: resultList,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+
+};  
+
 const getRegions = async (req, res, next) => {
   try {
     const allRegions = await prisma.regions.findMany({
+      where:{isactive: true},
       select: {
         id: true,
         name: true,
@@ -72,9 +137,9 @@ const postRegions = async (req, res) => {
     });
 
     if (regionExist) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "Region with this name already exists",
+        message: "Region with this name already exists",
         data: {},
       });
     }
@@ -85,7 +150,7 @@ const postRegions = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Successful user creation",
+      message: "Successful region creation",
       data: region,
     });
   } catch (err) {
@@ -109,9 +174,9 @@ const postCountry = async (req, res) => {
     });
     // if not exists, throw error
     if (!regionExist) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "Region with this id does not exist",
+        message: "Region with this id does not exist",
         data: {},
       });
     }
@@ -124,9 +189,9 @@ const postCountry = async (req, res) => {
     });
 
     if (countryExists) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "Country with this name already exists",
+        message: "Country with this name already exists",
         data: {},
       });
     }
@@ -197,6 +262,9 @@ const deleteRegionsById = async (req, res) => {
   try {
     const regionExist = await prisma.regions.findFirst({
       where: { id: Number(id) },
+      select:{
+        countries:true,
+      }
     });
 
     // if not exists, throw error
@@ -210,7 +278,7 @@ const deleteRegionsById = async (req, res) => {
     }
 
     const hasCountries = await prisma.countries.findMany({
-      where: { regions_id: Number(id) },
+      where: { regions_id: Number(id), isactive: true  },
     });
 
     if (hasCountries.length > 0) {
@@ -221,8 +289,9 @@ const deleteRegionsById = async (req, res) => {
       });
     }
 
-    const region = await prisma.regions.delete({
+    const region = await prisma.regions.update({
       where: { id: Number(id) },
+      data:{ isactive: false},
       select: {
         id: true,
         name: true,
@@ -245,6 +314,7 @@ const deleteRegionsById = async (req, res) => {
 
 module.exports = {
   getRegions,
+  getTreeview,
   postRegions,
   getRegionByID,
   putRegionsById,

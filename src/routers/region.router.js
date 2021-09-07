@@ -10,10 +10,15 @@ router.get("/", AuthorizationAdmin, RegionController.getRegions);
 
 router
   .get(
-    "/:id",
-    validationMiddleware.id,
+    "/regionid/:id",
+    // validationMiddleware.id,
     AuthorizationAdmin,
     RegionController.getRegionByID
+  )
+  .get(
+    "/treeview",
+    AuthorizationAdmin,
+    RegionController.getTreeview
   )
 
   .post(
@@ -24,7 +29,7 @@ router
   )
   .post(
     "/:id/country",
-    validationMiddleware.id,
+    // validationMiddleware.id,
     validationMiddleware.locationName,
     AuthorizationAdmin,
     RegionController.postCountry

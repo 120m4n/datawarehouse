@@ -10,15 +10,15 @@ router.get("/", AuthorizationAdmin, CountryController.getCountries);
 
 router
   .get(
-    "/:id",
-    validationMiddleware.id,
+    "/countryid/:id",
+    // validationMiddleware.id,
     AuthorizationAdmin,
     CountryController.getCountryByID
   )
 
   .post(
     "/:id/city",
-    validationMiddleware.id,
+    // validationMiddleware.id,
     validationMiddleware.locationName,
     AuthorizationAdmin,
     CountryController.postCity
@@ -26,7 +26,7 @@ router
 
   .put(
     "/:id",
-    validationMiddleware.id,
+    // validationMiddleware.id,
     validationMiddleware.locationName,
     AuthorizationAdmin,
     CountryController.putCountriesById

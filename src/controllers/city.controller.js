@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 const getCityByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const cityData = await prisma.cities.findUnique({
-      where: { id: Number(id) },
+    const cityData = await prisma.cities.findFirst({
+      where: { id: Number(id), isactive: true},
     });
     if (cityData) {
       return res.status(200).json({
@@ -63,9 +63,9 @@ const putCitiesById = async (req, res) => {
     // if not exists, throw error
 
     if (!CityExist) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "City Not Exists",
+        message: "City Not Exists",
         data: {},
       });
     }
@@ -96,6 +96,10 @@ const deleteCitiesById = async (req, res) => {
   try {
     const CityExist = await prisma.cities.findFirst({
       where: { id: Number(id) },
+      select:{
+        companies: true,
+        contacts: true,
+      }
     });
 
     // if not exists, throw error
@@ -108,19 +112,32 @@ const deleteCitiesById = async (req, res) => {
       });
     }
 
-    const hasCompanies = await prisma.companies.findMany({
-      where: { cities_id: Number(id) },
-    });
+    const hasCompanies = CityExist.companies.length;
+    const hasContacts = CityExist.contacts.length;
 
-    if (hasCompanies.length > 0) {
-      return res.status(400).json({
-        success: false,
-        error: "Delete Companies first",
-        data: {
-          total: hasCompanies.length,
-          companies: hasCompanies,
+    if (hasCompanies > 0 || hasContacts > 0) {
+      // return res.status(400).json({
+      //   success: false,
+      //   error: "Delete Companies first",
+      //   data: {
+      //     total: hasCompanies.length,
+      //     companies: hasCompanies,
+      //   },
+      // });
+      const city = await prisma.cities.update({
+        where: { id: Number(id) },
+        data: { isactive: false},
+        select: {
+          id: true,
+          name: true,
         },
+      })
+      return res.status(200).json({
+        success: true,
+        message: "Successful city delete",
+        data: city,
       });
+
     }
 
     const city = await prisma.cities.delete({
@@ -137,6 +154,7 @@ const deleteCitiesById = async (req, res) => {
       data: city,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({
       success: false,
       message: err.message,

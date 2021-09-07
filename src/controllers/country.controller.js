@@ -4,8 +4,8 @@ const prisma = new PrismaClient();
 const getCountryByID = async (req, res) => {
   const { id } = req.params;
   try {
-    const countryData = await prisma.countries.findUnique({
-      where: { id: Number(id) },
+    const countryData = await prisma.countries.findFirst({
+      where: { id: Number(id), isactive: true },
       select: {
         id: true,
         name: true,
@@ -72,9 +72,9 @@ const postCity = async (req, res) => {
     });
 
     if (!CountryExist) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "Country with this id does not exist",
+        message: "Country with this id does not exist",
         data: {},
       });
     }
@@ -87,9 +87,9 @@ const postCity = async (req, res) => {
     });
 
     if (cityExists) {
-      return res.status(400).json({
+      return res.status(409).json({
         success: false,
-        error: "City with this name already exists",
+        message: "City with this name already exists",
         data: {},
       });
     }
@@ -173,7 +173,7 @@ const deleteCountriesById = async (req, res) => {
     }
 
     const hasCities = await prisma.cities.findMany({
-      where: { countries_id: Number(id) },
+      where: { countries_id: Number(id), isactive: true},
     });
 
     if (hasCities.length > 0) {
@@ -184,8 +184,9 @@ const deleteCountriesById = async (req, res) => {
       });
     }
 
-    const country = await prisma.countries.delete({
+    const country = await prisma.countries.update({
       where: { id: Number(id) },
+      data:{ isactive: false},
       select: {
         id: true,
         name: true,

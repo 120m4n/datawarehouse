@@ -8,16 +8,17 @@ const validationMiddleware = require("../middleware/validation-middleware");
 
 router.get("/", AuthorizationAdmin, CityController.getCities);
 
-router.get(
-  "/:id",
-  validationMiddleware.id,
-  AuthorizationAdmin,
-  CityController.getCityByID
-);
+router
+  .get(
+    "/cityid/:id",
+    // validationMiddleware.id,
+    AuthorizationAdmin,
+    CityController.getCityByID
+  );
 
 router.put(
   "/:id",
-  validationMiddleware.id,
+  // validationMiddleware.id,
   validationMiddleware.locationName,
   AuthorizationAdmin,
   CityController.putCitiesById

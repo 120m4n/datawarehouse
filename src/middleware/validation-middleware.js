@@ -128,8 +128,8 @@ const locationName = (req, res, next) => {
     if (!status) {
       res.status(400).send({
         success: false,
-        message: "Validation failed",
-        data: err,
+        error: err.errors.name,
+        data: {},
       });
     } else {
       next();

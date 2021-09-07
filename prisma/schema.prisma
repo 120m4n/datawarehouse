@@ -17,6 +17,7 @@ model cities {
   id           Int         @id @default(autoincrement())
   name         String      @db.VarChar(45)
   countries_id Int
+  isactive     Boolean?    @default(dbgenerated("(b'1')")) @db.Bit(1)
   countries    countries   @relation(fields: [countries_id], references: [id])
   companies    companies[]
   contacts     contacts[]
@@ -31,6 +32,7 @@ model companies {
   email     String     @db.VarChar(45)
   phone     String     @db.VarChar(15)
   cities_id Int
+  isactive  Boolean?   @default(dbgenerated("(b'1')")) @db.Bit(1)
   cities    cities     @relation(fields: [cities_id], references: [id])
   contacts  contacts[]
 
@@ -50,6 +52,7 @@ model contacts {
   users_id          Int
   companies_id      Int
   cities_id         Int
+  isactive          Boolean?            @default(dbgenerated("(b'1')")) @db.Bit(1)
   cities            cities              @relation(fields: [cities_id], references: [id])
   companies         companies           @relation(fields: [companies_id], references: [id])
   users             users               @relation(fields: [users_id], references: [id])
@@ -79,6 +82,7 @@ model countries {
   id         Int      @id @default(autoincrement())
   name       String   @db.VarChar(45)
   regions_id Int
+  isactive   Boolean? @default(dbgenerated("(b'1')")) @db.Bit(1)
   regions    regions  @relation(fields: [regions_id], references: [id])
   cities     cities[]
 
@@ -94,6 +98,7 @@ model preferences {
 model regions {
   id        Int         @id @default(autoincrement())
   name      String      @db.VarChar(45)
+  isactive  Boolean?    @default(dbgenerated("(b'1')")) @db.Bit(1)
   countries countries[]
 }
 
