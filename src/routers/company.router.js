@@ -7,7 +7,7 @@ const {
   AuthorizationUser,
 } = require("../auth/authorization");
 
-// const validationMiddleware = require("../middleware/validation-middleware");
+const validationMiddleware = require("../middleware/validation-middleware");
 
 router.get("/", CompanyController.getCompanies);
 
@@ -20,23 +20,26 @@ router
   )
 
 
-  // .post(
-  //   "/",
-  //   // validationMiddleware.userData,
-  //   AuthorizationAdmin,
-  //   CompanyController.Create
-  // )
+  .post(
+    "/",
+    validationMiddleware.companyData,
+    AuthorizationAdmin,
+    CompanyController.Create
+  )
 
-  // .put(
-  //   "/:id",
-  //   AuthorizationAdmin,
-  //   CompanyController.Update
-  // )
+  .put(
+    "/:id",
+    validationMiddleware.id,
+    validationMiddleware.companyData,
+    AuthorizationAdmin,
+    CompanyController.Update
+  )
 
-  // .delete(
-  //   "/:id",
-  //   AuthorizationAdmin,
-  //   CompanyController.Delete
-  // );
+  .delete(
+    "/:id",
+    validationMiddleware.id,
+    AuthorizationAdmin,
+    CompanyController.Delete
+  );
 
 module.exports = router;

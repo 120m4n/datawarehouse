@@ -63,45 +63,6 @@ const login = (req, res, next) => {
   });
 };
 
-const order = (req, res, next) => {
-  const validationRule = {
-    id_user: "required|numeric",
-    id_payment: "required|numeric|min:1|max:3",
-    products: "required",
-    "products.*.id_product": "required|numeric",
-    "products.*.quantity": "required|numeric",
-  };
-  validator(req.body, validationRule, {}, (err, status) => {
-    if (!status) {
-      res.status(400).send({
-        success: false,
-        message: "Validation failed",
-        data: err,
-      });
-    } else {
-      next();
-    }
-  });
-};
-
-const product = (req, res, next) => {
-  const validationRule = {
-    product_name: "required|string",
-    price: "required|numeric|max:1000000",
-    availability: "boolean",
-  };
-  validator(req.body, validationRule, {}, (err, status) => {
-    if (!status) {
-      res.status(400).send({
-        success: false,
-        message: "Validation failed",
-        data: err,
-      });
-    } else {
-      next();
-    }
-  });
-};
 
 const username = (req, res, next) => {
   const validationRule = {
@@ -120,7 +81,28 @@ const username = (req, res, next) => {
   });
 };
 
-const locationName = (req, res, next) => {
+const companyData = (req, res, next) => {
+  const validationRule = {
+    name: "required|string|min:5|max:100",
+    address: "required|string|max:100",
+    email: "required|email",
+    phone: "required|string|max:15",
+    cities_id: "required|integer",
+  };
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      res.status(400).send({
+        success: false,
+        error: err.errors,
+        data:  {},
+      });
+    } else {
+      next();
+    }
+  });
+};
+
+const dataName = (req, res, next) => {
   const validationRule = {
     name: "required|string|min:4|max:25",
   };
@@ -162,8 +144,8 @@ const id = (req, res, next) => {
     if (!status) {
       res.status(400).send({
         success: false,
-        message: "validation",
-        data: err,
+        error: err.errors.id.join('\n'),
+        data: {},
       });
     } else {
       next();
@@ -176,7 +158,8 @@ module.exports = {
   userData,
   userUpdateData,
   username,
-  locationName,
+  dataName,
+  companyData,
   email,
   id,
   // product,

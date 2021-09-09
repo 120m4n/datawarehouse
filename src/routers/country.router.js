@@ -19,7 +19,7 @@ router
   .post(
     "/:id/city",
     // validationMiddleware.id,
-    validationMiddleware.locationName,
+    validationMiddleware.dataName,
     AuthorizationAdmin,
     CountryController.postCity
   )
@@ -27,7 +27,7 @@ router
   .put(
     "/:id",
     // validationMiddleware.id,
-    validationMiddleware.locationName,
+    validationMiddleware.dataName,
     AuthorizationAdmin,
     CountryController.putCountriesById
   )

@@ -9,10 +9,12 @@ const getCountryByID = async (req, res) => {
       select: {
         id: true,
         name: true,
+        regions_id: true,
         cities: {
           select: {
             id: true,
             name: true,
+            isactive: true,
           },
         },
       },
@@ -44,6 +46,7 @@ const getCountries = async (req, res, next) => {
       select: {
         id: true,
         name: true,
+        isactive: true,
       },
     });
 

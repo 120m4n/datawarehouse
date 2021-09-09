@@ -80,49 +80,30 @@ const getCompanies = async (req, res, next) => {
 
 const Create = async (req, res) => {
   const body = req.body;
-  // console.log(body);
   try {
-    let CompanyExists;
-    const { email } = req.body;
-    const { Companyname } = req.body;
+    let companyExists;
+    const { name } = req.body;
 
-    CompanyExists = await prisma.Companys.findUnique({
-      where: { email: email },
+    companyExists = await prisma.companies.findFirst({
+      where: { name: name },
     });
 
-    if (CompanyExists) {
-      return res.status(400).json({
+    if (companyExists) {
+      return res.status(404).json({
         success: false,
-        message: "Company with this email already exists",
+        message: "Company with this name already exists",
         data: {},
       });
     }
 
-    CompanyExists = await prisma.Companys.findUnique({
-      where: { Companyname: Companyname },
-    });
-
-    if (CompanyExists) {
-      return res.status(409).json({
-        success: false,
-        message: "Company with this Companyname already exists",
-        data: {},
-      });
-    }
-
-    const salt = genSaltSync(10);
-    body.password = hashSync(body.password, salt);
-
-    const Company = await prisma.Companys.create({
+    const company = await prisma.companies.create({
       data: body,
     });
-
-    Company.password = undefined;
 
     return res.status(200).json({
       success: true,
       message: "Successful Company creation",
-      data: Company,
+      data: company,
     });
   } catch (err) {
     return res.status(500).json({
@@ -137,60 +118,37 @@ const Create = async (req, res) => {
 const Update = async (req, res) => {
   const { id } = req.params;
   const body = req.body;
-  let Company;
+  let company;
   try {
-    const CompanyExists = await prisma.Companys.findFirst({
+    const companyExists = await prisma.companies.findFirst({
       where: { id: Number(id) },
     });
 
     // if not exists, throw error
 
-    if (!CompanyExists) {
-      return res.status(400).json({
+    if (!companyExists) {
+      return res.status(404).json({
         success: false,
         error: "Company Not Exists",
         data: {},
       });
     }
 
-    if (body.password) {
-      const salt = genSaltSync(10);
-      body.password = hashSync(body.password, salt);
-
-      Company = await prisma.Companys.update({
-        where: { id: Number(id) },
-        data: {
-          lastname: body.lastname,
-          password: body.password,
-          isadmin: body.isadmin,
-        },
-        select: {
-          id: true,
-          Companyname: true,
-          lastname: true,
-          isadmin: true,
-        },
-      });
-    } else {
-      Company = await prisma.Companys.update({
-        where: { id: Number(id) },
-        data: {
-          lastname: body.lastname,
-          isadmin: body.isadmin,
-        },
-        select: {
-          id: true,
-          Companyname: true,
-          lastname: true,
-          isadmin: true,
-        },
-      });
-    }
-
+    company = await prisma.companies.update({
+      where: { id: Number(id) },
+      data: {
+        name: body.name,
+        address: body.address,
+        email: body.email,
+        phone: body.phone,
+        cities_id: body.cities_id,
+      },
+    });
+    
     return res.status(200).json({
       success: true,
       message: "Successful Company update",
-      data: Company,
+      data: company,
     });
   } catch (err) {
     return res.status(500).json({
@@ -204,7 +162,7 @@ const Update = async (req, res) => {
 const Delete = async (req, res) => {
   const { id } = req.params;
   try {
-    const CompanyExists = await prisma.Companys.findFirst({
+    const companyExists = await prisma.companies.findFirst({
       where: { id: Number(id) },
       select: { 
         contacts:true,
@@ -213,7 +171,7 @@ const Delete = async (req, res) => {
 
     // if not exists, throw error
 
-    if (!CompanyExists) {
+    if (!companyExists) {
       return res.status(400).json({
         success: false,
         error: "Company Not Exists",
@@ -221,44 +179,40 @@ const Delete = async (req, res) => {
       });
     }
 
-    const hasContacts = CompanyExists.contacts.length;
+    const hasContacts = companyExists.contacts.length;
     // Company has contacts
     if (hasContacts > 0) {
-      const Company = await prisma.Companys.update({
+      const company = await prisma.companies.update({
         where: { id: Number(id) },
         data: { isactive: false},
         select: {
           id: true,
-          Companyname: true,
-          lastname: true,
-          email: true,
-          isadmin: true,
+          name: true,
         },
-      });
+      })
   
       return res.status(200).json({
         success: true,
         message: "Successful Company delete",
-        data: Company,
+        data: company,
       });
 
     }
 
-    const Company = await prisma.Companys.delete({
+    const company = await prisma.companies.delete({
       where: { id: Number(id) },
       select: {
         id: true,
-        Companyname: true,
-        lastname: true,
+        name: true,
+        address: true,
         email: true,
-        isadmin: true,
       },
     });
 
     return res.status(200).json({
       success: true,
       message: "Successful Company delete",
-      data: Company,
+      data: company,
     });
   } catch (err) {
     return res.status(500).json({
@@ -272,7 +226,7 @@ const Delete = async (req, res) => {
 module.exports = {
   getCompanyByID,
   getCompanies,
-  // Create,
-  // Update,
-  // Delete,
+  Create,
+  Update,
+  Delete,
 };

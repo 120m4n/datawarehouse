@@ -19,7 +19,7 @@ router
 router.put(
   "/:id",
   // validationMiddleware.id,
-  validationMiddleware.locationName,
+  validationMiddleware.dataName,
   AuthorizationAdmin,
   CityController.putCitiesById
 );

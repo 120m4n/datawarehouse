@@ -13,6 +13,7 @@ const getRegionByID = async (req, res) => {
           select: {
             id: true,
             name: true,
+            isactive: true,
           },
         },
       },

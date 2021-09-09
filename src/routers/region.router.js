@@ -23,14 +23,14 @@ router
 
   .post(
     "/",
-    validationMiddleware.locationName,
+    validationMiddleware.dataName,
     AuthorizationAdmin,
     RegionController.postRegions
   )
   .post(
     "/:id/country",
     // validationMiddleware.id,
-    validationMiddleware.locationName,
+    validationMiddleware.dataName,
     AuthorizationAdmin,
     RegionController.postCountry
   )
@@ -38,7 +38,7 @@ router
   .put(
     "/:id",
     validationMiddleware.id,
-    validationMiddleware.locationName,
+    validationMiddleware.dataName,
     AuthorizationAdmin,
     RegionController.putRegionsById
   )
