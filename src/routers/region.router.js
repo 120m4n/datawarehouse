@@ -2,36 +2,36 @@ const express = require("express");
 const router = express.Router();
 
 const RegionController = require("../controllers/region.controller");
-const { AuthorizationAdmin } = require("../auth/authorization");
+const { AuthorizationAdmin, AuthorizationUser } = require("../auth/authorization");
 
 const validationMiddleware = require("../middleware/validation-middleware");
 
-router.get("/", AuthorizationAdmin, RegionController.getRegions);
+router.get("/", AuthorizationUser, RegionController.getRegions);
 
 router
   .get(
     "/regionid/:id",
     // validationMiddleware.id,
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.getRegionByID
   )
   .get(
     "/treeview",
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.getTreeview
   )
 
   .post(
     "/",
     validationMiddleware.dataName,
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.postRegions
   )
   .post(
     "/:id/country",
     // validationMiddleware.id,
     validationMiddleware.dataName,
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.postCountry
   )
 
@@ -39,14 +39,14 @@ router
     "/:id",
     validationMiddleware.id,
     validationMiddleware.dataName,
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.putRegionsById
   )
 
   .delete(
     "/:id",
     validationMiddleware.id,
-    AuthorizationAdmin,
+    AuthorizationUser,
     RegionController.deleteRegionsById
   );
 

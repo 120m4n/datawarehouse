@@ -91,7 +91,7 @@ const Create = async (req, res) => {
     if (companyExists) {
       return res.status(404).json({
         success: false,
-        message: "Company with this name already exists",
+        error: "Company with this name already exists",
         data: {},
       });
     }

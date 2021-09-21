@@ -194,7 +194,7 @@ const Create = async (req, res) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        message: "User with this email already exists",
+        error: "User with this email already exists",
         data: {},
       });
     }
@@ -206,7 +206,7 @@ const Create = async (req, res) => {
     if (userExists) {
       return res.status(409).json({
         success: false,
-        message: "User with this username already exists",
+        error: "User with this username already exists",
         data: {},
       });
     }
@@ -237,8 +237,8 @@ const Create = async (req, res) => {
 const login = async (req, res) => {
   const body = req.body;
   try {
-    const userData = await prisma.users.findUnique({
-      where: { username: body.username },
+    const userData = await prisma.users.findFirst({
+      where: { username: body.username, isactive: true },
     });
     if (userData) {
       //cliente admin/user con el pass descifrado en bd

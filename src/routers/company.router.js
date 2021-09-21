@@ -15,7 +15,7 @@ router.get("/", CompanyController.getCompanies);
 router
   .get(
     "/companyId/:id",
-    AuthorizationAdmin,
+    AuthorizationUser,
     CompanyController.getCompanyByID
   )
 
@@ -23,7 +23,7 @@ router
   .post(
     "/",
     validationMiddleware.companyData,
-    AuthorizationAdmin,
+    AuthorizationUser,
     CompanyController.Create
   )
 
@@ -31,14 +31,14 @@ router
     "/:id",
     validationMiddleware.id,
     validationMiddleware.companyData,
-    AuthorizationAdmin,
+    AuthorizationUser,
     CompanyController.Update
   )
 
   .delete(
     "/:id",
     validationMiddleware.id,
-    AuthorizationAdmin,
+    AuthorizationUser,
     CompanyController.Delete
   );
 

@@ -2,8 +2,8 @@ const validator = require("../helpers/validate");
 
 const userData = (req, res, next) => {
   const validationRule = {
-    username: "required|string|min:5|max:25",
-    lastname: "required|string|max:25",
+    username: "required|string|min:5|max:35",
+    lastname: "required|string|max:35",
     email: "required|email",
     password: "required|string|min:6",
     isadmin: "required|boolean",
@@ -24,7 +24,7 @@ const userData = (req, res, next) => {
 const userUpdateData = (req, res, next) => {
   const validationRule = {
     // username: "required|string|min:5|max:25",
-    lastname: "required|string|max:25",
+    lastname: "required|string|max:35",
     // email: "required|email",
     password: "string|min:6",
     isadmin: "required|boolean",
@@ -66,7 +66,7 @@ const login = (req, res, next) => {
 
 const username = (req, res, next) => {
   const validationRule = {
-    username: "required|string|min:5|max:25",
+    username: "required|string|min:5|max:35",
   };
   validator(req.params, validationRule, {}, (err, status) => {
     if (!status) {
@@ -86,7 +86,7 @@ const companyData = (req, res, next) => {
     name: "required|string|min:5|max:100",
     address: "required|string|max:100",
     email: "required|email",
-    phone: "required|string|max:15",
+    phone: "required|string|max:25",
     cities_id: "required|integer",
   };
   validator(req.body, validationRule, {}, (err, status) => {
@@ -104,7 +104,7 @@ const companyData = (req, res, next) => {
 
 const dataName = (req, res, next) => {
   const validationRule = {
-    name: "required|string|min:4|max:25",
+    name: "required|string|min:4|max:35",
   };
   validator(req.body, validationRule, {}, (err, status) => {
     if (!status) {
