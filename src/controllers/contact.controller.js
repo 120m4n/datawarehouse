@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 const getContacts = async (req, res, next) => {
   try {
     const allContacts = await prisma.contacts.findMany({
+      where: { isactive: true },
       select: {
         id: true,
         username: true,
@@ -140,7 +141,52 @@ const getContactById = async (req, res, next) => {
   }
 };
 
+const Delete = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const contactExists = await prisma.contacts.findFirst({
+      where: { id: Number(id) },
+    });
+
+    // if not exists, throw error
+
+    if (!contactExists) {
+      return res.status(400).json({
+        success: false,
+        error: "Contact Not Exists",
+        data: {},
+      });
+    }
+
+
+    const contact = await prisma.contacts.update({
+      where: { id: Number(id) },
+      data: { isactive: false},
+      select: {
+        id: true,
+        username: true,
+      },
+    })
+
+    return res.status(200).json({
+      success: true,
+      message: "Successful Contact delete",
+      data: contact,
+    });
+
+    
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
+
 module.exports = {
   getContacts,
   getContactById,
+  Delete,
 };

@@ -14,9 +14,10 @@ const getCityByID = async (req, res) => {
         data: cityData,
       });
     } else {
-      return res.status(404).json({
+      return res.status(400).json({
         success: false,
-        message: "City not found",
+        message: "City not Exist",
+        data:{},
       });
     }
   } catch (err) {
@@ -97,8 +98,18 @@ const deleteCitiesById = async (req, res) => {
     const CityExist = await prisma.cities.findFirst({
       where: { id: Number(id) },
       select:{
-        companies: true,
-        contacts: true,
+        companies:{
+          select:{
+            name: true,
+            isactive: true,
+          },
+        },
+        contacts: {
+          select: {
+            username: true,
+            isactive: true,
+          },
+        },
       }
     });
 
@@ -112,18 +123,21 @@ const deleteCitiesById = async (req, res) => {
       });
     }
 
-    const hasCompanies = CityExist.companies.length;
-    const hasContacts = CityExist.contacts.length;
+    const hasCompanies = CityExist.companies.filter(c => c.isactive === true);
+    const hasContacts = CityExist.contacts.filter(c => c.isactive === true);
 
-    if (hasCompanies > 0 || hasContacts > 0) {
-      // return res.status(400).json({
-      //   success: false,
-      //   error: "Delete Companies first",
-      //   data: {
-      //     total: hasCompanies.length,
-      //     companies: hasCompanies,
-      //   },
-      // });
+    if (hasCompanies.length > 0 || hasContacts.length > 0) {
+      return res.status(400).json({
+        success: false,
+        error: "Tiene compañias o contactos asociados",
+        data: {
+          total_companies: hasCompanies.length,
+          companies: hasCompanies,
+          total_contacts: hasContacts.length,
+          contacts: hasContacts,
+        },
+      });
+    }else{
       const city = await prisma.cities.update({
         where: { id: Number(id) },
         data: { isactive: false},
@@ -137,22 +151,23 @@ const deleteCitiesById = async (req, res) => {
         message: "Successful city delete",
         data: city,
       });
-
     }
 
-    const city = await prisma.cities.delete({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        name: true,
-      },
-    });
+    
 
-    return res.status(200).json({
-      success: true,
-      message: "Successful city delete",
-      data: city,
-    });
+    // const city = await prisma.cities.delete({
+    //   where: { id: Number(id) },
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //   },
+    // });
+
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Successful city delete",
+    //   data: city,
+    // });
   } catch (err) {
     console.error(err);
     return res.status(500).json({

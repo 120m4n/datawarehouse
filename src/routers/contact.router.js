@@ -12,7 +12,7 @@ const validationMiddleware = require("../middleware/validation-middleware");
 router.get("/", AuthorizationUser, ContactController.getContacts);
 router.get("/:id",AuthorizationUser, ContactController.getContactById);
 
-// router
+router
 //   .get(
 //     "/getUserByName/:username",
 //     validationMiddleware.username,
@@ -59,11 +59,11 @@ router.get("/:id",AuthorizationUser, ContactController.getContactById);
 //       ContactController.Update
 //     )
 
-//     .delete(
-//       "/:id",
-//       validationMiddleware.id,
-//       AuthorizationAdmin,
-//       ContactController.Delete
-//     );
+    .delete(
+      "/:id",
+      validationMiddleware.id,
+      AuthorizationUser,
+      ContactController.Delete
+    );
 
 module.exports = router;

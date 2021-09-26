@@ -26,9 +26,10 @@ const getCountryByID = async (req, res) => {
         data: countryData,
       });
     } else {
-      return res.status(404).json({
-        success: false,
-        message: "Country not found",
+      return res.status(400).json({
+        success: true,
+        message: "Country not Exists",
+        data: {},
       });
     }
   } catch (err) {
