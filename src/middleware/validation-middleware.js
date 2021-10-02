@@ -81,6 +81,49 @@ const username = (req, res, next) => {
   });
 };
 
+const contactData = (req, res, next) => {
+  const validationRule = {
+    username: "required|string|min:5|max:100",
+    lastname: "required|string|max:100",
+    job_tittle: "required|string|max:100",
+    address: "required|string|max:100",
+    email: "required|email",
+    users_id: "required|integer",
+    companies_id: "required|integer",
+    cities_id: "required|integer",
+  };
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      res.status(400).send({
+        success: false,
+        error: err.errors,
+        data:  {},
+      });
+    } else {
+      next();
+    }
+  });
+};
+
+const contactChannelData = (req, res, next) => {
+  const validationRule = {
+    acount: "required|string|min:5|max:100",
+    channels_id: "required|integer",
+    preferences_id: "required|integer",
+    contacts_id: "required|integer",
+  };
+  validator(req.body, validationRule, {}, (err, status) => {
+    if (!status) {
+      res.status(400).send({
+        success: false,
+        error: err.errors,
+        data:  {},
+      });
+    } else {
+      next();
+    }
+  });
+}
 const companyData = (req, res, next) => {
   const validationRule = {
     name: "required|string|min:5|max:100",
@@ -101,6 +144,7 @@ const companyData = (req, res, next) => {
     }
   });
 };
+
 
 const dataName = (req, res, next) => {
   const validationRule = {
@@ -160,6 +204,8 @@ module.exports = {
   username,
   dataName,
   companyData,
+  contactData,
+  contactChannelData,
   email,
   id,
   // product,

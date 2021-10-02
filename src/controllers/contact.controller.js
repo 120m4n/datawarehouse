@@ -141,6 +141,65 @@ const getContactById = async (req, res, next) => {
   }
 };
 
+const Create = async (req, res) => {
+  const body = req.body;
+
+  try {
+    const contact = await prisma.contacts.create({
+      data: body,
+    });
+    
+    return res.status(200).json({
+      success: true,
+      message: "Successful Contact creation",
+      data: contact.id,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
+
+const CreateChannels = async (req, res) => {
+  const { id } = req.params;
+  const body = req.body;
+  try {
+    let contactExists;
+
+    contactExists = await prisma.contacts.findFirst({
+      where: { id: Number(id) },
+    });
+
+    if (!contactExists) {
+      return res.status(404).json({
+        success: false,
+        error: "Contact Not Exists",
+        data: {},
+      });
+    }
+
+    const conctact_channel = await prisma.contacts_channels.create({
+      data: body,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Successful Contact creation",
+      data: conctact_channel,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+}
+
+
 const Delete = async (req, res) => {
   const { id } = req.params;
   try {
@@ -188,5 +247,7 @@ const Delete = async (req, res) => {
 module.exports = {
   getContacts,
   getContactById,
+  Create,
+  CreateChannels,
   Delete,
 };
