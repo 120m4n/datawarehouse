@@ -27,6 +27,20 @@ router
     ContactController.CreateChannels
   )
 
+  .put(
+    "/:id",
+    validationMiddleware.contactData,
+    AuthorizationUser,
+    ContactController.Update
+  )
+
+  // .put(
+  //   "/:id/channels",
+  //   validationMiddleware.contactChannelData,
+  //   AuthorizationUser,
+  //   ContactController.UpdateChannels
+  // )
+
   .delete(
     "/:id",
     validationMiddleware.id,

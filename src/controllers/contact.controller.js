@@ -78,11 +78,10 @@ const getContactById = async (req, res, next) => {
         lastname: true,
         email: true,
         job_tittle: true,
-        companies: {
-          select: {
-            name: true,
-          },
-        },
+        address: true,
+        interest: true,
+        companies_id : true,
+        cities_id: true,
         contacts_channels: {
           select: {
             acount: true,
@@ -171,6 +170,10 @@ const CreateChannels = async (req, res) => {
 
     contactExists = await prisma.contacts.findFirst({
       where: { id: Number(id) },
+      select: { 
+        id:true,
+        contacts_channels: true,
+      },
     });
 
     if (!contactExists) {
@@ -180,6 +183,16 @@ const CreateChannels = async (req, res) => {
         data: {},
       });
     }
+
+    const oldcontacts_channels = contactExists.contacts_channels;
+    // console.log(contactExists);
+
+    oldcontacts_channels.forEach( async(element) => {
+      await prisma.contacts_channels.delete({
+        where: { id : Number(element.id) },
+      });
+    });
+
 
     const conctact_channel = await prisma.contacts_channels.create({
       data: body,
@@ -199,6 +212,44 @@ const CreateChannels = async (req, res) => {
   }
 }
 
+const Update = async (req, res) => {
+  const { id } = req.params;
+  const body = req.body;
+  let contact;
+  try {
+    const contactExists = await prisma.contacts.findFirst({
+      where: { id: Number(id) },
+    });
+
+    // if not exists, throw error
+
+    if (!contactExists) {
+      return res.status(400).json({
+        success: false,
+        error: "Contact Not Exists",
+        data: {},
+      });
+    }
+
+    contact = await prisma.contacts.update({
+      where: { id: Number(id) },
+      data: body,
+    });
+   
+
+    return res.status(200).json({
+      success: true,
+      message: "Successful Contact update",
+      data: contact.id,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+      data: {},
+    });
+  }
+};
 
 const Delete = async (req, res) => {
   const { id } = req.params;
@@ -248,6 +299,7 @@ module.exports = {
   getContacts,
   getContactById,
   Create,
+  Update,
   CreateChannels,
   Delete,
 };

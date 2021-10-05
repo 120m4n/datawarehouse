@@ -1,8 +1,14 @@
 # DataWareHouse
-**Proyecto Integrador Delilah Restó**
+**Proyecto Final Data Warehouse**
 
- API Backend en express para un sistema de pedidos online para un restaurante que permite realizar 
- operaciones CRUD sobre una estructura de datos
+Sistema para la administracion de contactos de clientes para una compañia.
+
+#Modo Freelance
+
+##Entregables
+- Carpeta FrontEnd: Incluye html,css 
+
+
 ## Requisitos
 
 ### Instalar NodeJS
